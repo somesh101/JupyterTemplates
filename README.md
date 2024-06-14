@@ -1,65 +1,87 @@
-# jupyter-templates README
+# Notebook Template Creator - VS Code Extension
 
-This is the README for your extension "jupyter-templates". After writing up a brief description, we recommend including the following sections.
+## Description
+
+The Notebook Template Creator is a VS Code extension that allows users to create and manage templates from existing notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save up to three different templates and load them as needed.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Create Templates**: Save the structure and content of existing notebooks as templates.
+- **Load Templates**: Quickly load saved templates using commands:
+  - `Load Template 1`
+  - `Load Template 2`
+  - `Load Template 3`
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Clone this repository to your local machine.
+2. Open the project in VS Code.
+3. Run `npm install` to install dependencies.
+4. Open the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS) and type `Developer: Reload Window` to load the extension.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Usage
 
-## Requirements
+### Save a Template
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+1. Open a notebook you want to save as a template.
+2. Execute the command `Save Template` from the command palette.
+3. The notebook will be saved as one of the available templates in the extension's folder.
 
-## Extension Settings
+### Load a Template
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+1. Open the command palette.
+2. Execute one of the following commands:
+   - `Load Template 1`
+   - `Load Template 2`
+   - `Load Template 3`
+3. The selected template will be loaded into the current workspace.
 
-For example:
+## Upcoming Features
 
-This extension contributes the following settings:
+- **Save Templates to Extension Folder**: Implement a function to save templates in the extension's directory instead of user-specific folders.
+- **Enhanced Template Saving**: Develop a function to save templates from the existing document.
+- **JSON Format Update**: Update the JSON format used for saving templates to improve efficiency and flexibility.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Development
 
-## Known Issues
+### Getting Started
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+To start developing and contributing to this project:
 
-## Release Notes
+1. Fork this repository.
+2. Clone your forked repository to your local machine.
+3. Open the project in VS Code.
+4. Install the necessary dependencies by running `npm install`.
 
-Users appreciate release notes as you update your extension.
+### File Structure
 
-### 1.0.0
+- `src/`: Source code for the extension.
+- `template.json`: File where templates are stored.
 
-Initial release of ...
+### Running the Extension
 
-### 1.0.1
+1. Press `F5` to open a new VS Code window with the extension loaded.
+2. Use the commands mentioned above to test the functionality.
 
-Fixed issue #.
+## Contributing
 
-### 1.1.0
+Contributions are welcome! Please follow these steps to contribute:
 
-Added features X, Y, and Z.
+1. Fork this repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add new feature'`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Create a Pull Request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any issues or suggestions, please open an issue on GitHub.
 
 ---
 
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Thank you for using Notebook Template Creator! We hope it enhances your productivity.
