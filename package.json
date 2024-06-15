@@ -15,10 +15,31 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "jupyter-templates.createNotebookFromTemplate",
-      "title": "Create: New Jupyter Notebook from Template"
-    }]
+    "notebookProvider": [
+            {
+                "viewType": "jupyter-templates.viewType",
+                "displayName": "Your Notebook Provider",
+                "selector": [
+                    {
+                        "filenamePattern": "*.json"
+                    }
+                ]
+            }
+        ],
+    "commands": [
+      {
+          "command": "jupyter-templates.loadTemplate1",
+          "title": "Load Template 1"
+      },
+      {
+          "command": "jupyter-templates.loadTemplate2",
+          "title": "Load Template 2"
+      },
+      {
+          "command": "jupyter-templates.createTemplate",
+          "title": "Create Template"
+      }
+  ]
   },
   "scripts": {
     "lint": "eslint .",

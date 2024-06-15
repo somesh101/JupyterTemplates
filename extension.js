@@ -2,80 +2,171 @@ const vscode = require("vscode");
 const path = require("path");
 const fs = require("fs");
 
-function readFile(filePath) {
-  try {
-    const content = JSON.parse(fs.readFileSync(filePath, "utf8"));
+function readTemplate(templateFilePath) {
+  return new Promise((resolve, reject) => {
+      fs.readFile(templateFilePath, 'utf8', (err, templateData) => {
+          if (err) {
+              console.error(`Error reading template ${templateFilePath}:`, err);
+              reject(err);
+              return;
+          }
 
-    if (Array.isArray(content)) {
-      const notebookCells = content.map(
-        (value) =>
-          new vscode.NotebookCellData(
-            vscode.NotebookCellKind.Code,
-            value.text,
-            "python"
-          )
-      );
-      return notebookCells;
-    }
-  } catch (err) {
-    return new vscode.NotebookCellData(
-      vscode.NotebookCellKind.Code,
-      "",
-      "python"
+          try {
+              const templateJson = JSON.parse(templateData);
+
+              // Extract cells from template JSON and convert to vscode.NotebookCellData array
+              const vscodeCells = templateJson.cells.map(cell => {
+                  let cellKind;
+                  switch (cell.cell_type) {
+                      case 'code':
+                          cellKind = vscode.NotebookCellKind.Code;
+                          break;
+                      case 'markdown':
+                          cellKind = vscode.NotebookCellKind.Markup;
+                          break;
+                      case 'raw':
+                          cellKind = vscode.NotebookCellKind.Markup;
+                          break;
+                      default:
+                          cellKind = vscode.NotebookCellKind.Code;
+                  }
+
+                  const vscodeCell = new vscode.NotebookCellData(
+                      cellKind,
+                      cell.source.join(''), // Join source array into a single string
+                      cell.language || 'python' // Replace with actual language if available
+                  );
+
+                  // Set metadata if available
+                  if (cell.metadata) {
+                      vscodeCell.metadata = cell.metadata;
+                  } else {
+                      vscodeCell.metadata = {};
+                  }
+
+                  return vscodeCell;
+              });
+
+              resolve(vscodeCells);
+          } catch (error) {
+              console.error(`Error parsing template JSON from ${templateFilePath}:`, error);
+              reject(error);
+          }
+      });
+  });
+}
+
+async function loadTemplate(context, templateName) {
+  try {
+    const templateFilePath = path.join(context.extensionPath,`/templates/${templateName}`);
+    const uri = vscode.Uri.parse(`untitled:${templateFilePath}`);
+    const document = await vscode.workspace.openNotebookDocument(uri);
+    const edit = new vscode.WorkspaceEdit();
+    
+    const vscodeCells = await readTemplate(templateFilePath);
+    console.log("Template read succesffuly:", templateFilePath); // Debugging
+    console.log(vscodeCells);
+    
+    let range = new vscode.NotebookRange(0, vscodeCells.length);
+    let notebookChanges = new vscode.NotebookEdit(range, vscodeCells);
+    edit.set(document.uri, [notebookChanges]);
+    await vscode.workspace.applyEdit(edit);
+    console.log("flag");
+
+    await vscode.window.showNotebookDocument(document, {
+      viewColumn: vscode.ViewColumn.One,
+    });
+    vscode.window.showInformationMessage(
+      `Template ${templateName} loaded successfully`
     );
+  } catch (error) {
+    console.error(`Error loading template ${templateName}:`, error);
+    vscode.window.showErrorMessage(`Error loading template ${templateName}`);
   }
 }
-function activate(context) {
-  // Register command
-  let disposable = vscode.commands.registerCommand(
-    "jupyter-templates.createNotebookFromTemplate",
-    async () => {
-      // Path to the .ipynb file
-      const fileUri =
-        "K:\\VS-Extension-dev\\jupyter-templates\\jupyter-templates\\jupyter-templates\\template.json";
 
-      const notebookPath = path.join(fileUri);
 
-      let notebookContent = readFile(notebookPath);
+async function createTemplate(context) {
+  const editor = vscode.window.activeNotebookEditor;
 
-      // Open the .ipynb file as a notebook
-      // not using untitle lable causes it to open directly into template file.
-      try {
-        const notebookUri = vscode.Uri.parse("untitled:template.ipynb");
-        const edit = new vscode.WorkspaceEdit();
+  if (!editor) {
+    vscode.window.showErrorMessage("No active editor found");
+    return;
+  }
 
-        const document = await vscode.workspace.openNotebookDocument(
-          notebookUri
-        );
+  const document = editor.notebook;
+  const filePath = document.uri.fsPath;
 
-        // console.log(notebookContent);
+  if (!filePath.endsWith(".ipynb")) {
+    vscode.window.showErrorMessage(
+      "The active file is not a Jupyter Notebook (.ipynb)"
+    );
+    return;
+  }
 
-        let range = new vscode.NotebookRange(0, 3);
-        let ed = new vscode.NotebookEdit(range, notebookContent);
+  try {
+    const notebookContent = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    console.log(notebookContent);
+    const cells = notebookContent.cells.map((cell, index) => ({
+      cell_type: cell.cell_type,
+      source: cell.source,
+      metadata: cell.metadata,
+      position: index,
+    }));
 
-        // setting changes and applying them to file before document is displayed
-        edit.set(document.uri, [ed]);
-        await vscode.workspace.applyEdit(edit);
+    const templateContent = {
+      cells,
+      metadata: notebookContent.metadata,
+    };
 
-        await vscode.window.showNotebookDocument(document, {
-          viewColumn: vscode.ViewColumn.One,
-        });
-
-        //opening the connection to current doc and trying to apply those changes in live
-
-        //        edit.set(editor.notebook.uri, [ed]);
-        await vscode.workspace.applyEdit(edit);
-
-        //document.isDirty = true;
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          `Failed to open notebook: ${error.message}`
-        );
+    const templateFilePath = path.join(
+      context.extensionPath,
+      "templates/template.ipynb"
+    );
+    fs.writeFile(
+      templateFilePath,
+      JSON.stringify(templateContent, null, 2),
+      "utf8",
+      (err) => {
+        if (err) {
+          console.error("Error creating template:", err);
+          vscode.window.showErrorMessage("Error creating template");
+          return;
+        }
+        vscode.window.showInformationMessage("Template created successfully");
       }
+    );
+  } catch (err) {
+    console.error("Error creating template:", err);
+    vscode.window.showErrorMessage("Error creating template");
+  }
+}
+
+function activate(context) {
+  let disposableLoadTemplate1 = vscode.commands.registerCommand(
+    "jupyter-templates.loadTemplate1",
+    async () => {
+      await loadTemplate(context, "template.ipynb");
     }
   );
 
-  context.subscriptions.push(disposable);
+  let disposableLoadTemplate2 = vscode.commands.registerCommand(
+    "jupyter-templates.loadTemplate2",
+    async () => {
+      await loadTemplate(context, "template2.json");
+    }
+  );
+
+  let disposableCreateTemplate = vscode.commands.registerCommand(
+    "jupyter-templates.createTemplate",
+    async () => {
+      await createTemplate(context);
+    }
+  );
+
+  context.subscriptions.push(disposableLoadTemplate1);
+  context.subscriptions.push(disposableLoadTemplate2);
+  context.subscriptions.push(disposableCreateTemplate);
 }
 
 exports.activate = activate;
