@@ -2,6 +2,12 @@ const vscode = require("vscode");
 const path = require("path");
 const fs = require("fs");
 
+/**
+ * Presents template names as menu for user to choose.
+ * @param {context.extensionPath} templateFilePath - extension directory from where extension was launched.
+ * This function handles the logic for reading the template and creating a an array of cells with thier properties
+ * 
+ */
 function readTemplate(templateFilePath) {
   return new Promise((resolve, reject) => {
     fs.readFile(templateFilePath, "utf8", (err, templateData) => {
@@ -59,6 +65,12 @@ function readTemplate(templateFilePath) {
   });
 }
 
+/**
+ * Presents template names as menu for user to choose.
+ * @param {vscode.ExtensionContext} context - The context in which the extension is activated.
+ * 
+ */
+
 async function loadTemplate(context, templateName) {
   try {
     const templateFilePath = path.join(
@@ -88,9 +100,15 @@ async function loadTemplate(context, templateName) {
   }
 }
 
+/**
+ * Creates a new JupyterLab template.
+ * @param {vscode.ExtensionContext} context - The context in which the extension is activated.
+ * This function handles the logic for creating a new template and saving it to the appropriate directory.
+ */
+
 async function createTemplate(context) {
   const editor = vscode.window.activeNotebookEditor;
- 
+
   if (!editor) {
     vscode.window.showErrorMessage("No active editor found");
     return;
@@ -120,9 +138,9 @@ async function createTemplate(context) {
       cells,
       metadata: notebookContent.metadata,
     };
-    
+
     let templateName = await createTemplateCommand();
-        
+
     const templateFilePath = path.join(
       context.extensionPath,
       `templates/${templateName}.ipynb`
@@ -146,6 +164,12 @@ async function createTemplate(context) {
   }
 }
 
+
+/**
+ * Reads template fileName from the templates directory.
+ * @param {vscode.ExtensionContext} context - The context in which the extension is activated.
+ * This function handles the logic for reading the template fileNames.
+ */
 function getTemplates(context) {
   const templatesDir = path.join(context.extensionPath, "/templates/");
   const templateFiles = fs.readdirSync(templatesDir);
@@ -155,6 +179,11 @@ function getTemplates(context) {
   }));
 }
 
+/**
+ * Presents template names as menu for user to choose.
+ * @param {vscode.ExtensionContext} context - The context in which the extension is activated.
+ * 
+ */
 async function loadTemplateCommand(context) {
   const templates = getTemplates(context);
   if (templates.length === 0) {
@@ -173,6 +202,10 @@ async function loadTemplateCommand(context) {
   loadTemplate(context, selectedTemplate.description);
 }
 
+/**
+ * Reads User inut for new template fileName.
+ * 
+ */
 async function createTemplateCommand() {
   const templateName = await vscode.window.showInputBox({
     placeHolder: "Enter template name",
@@ -184,7 +217,10 @@ async function createTemplateCommand() {
   return templateName;
 }
 
-
+/**
+ * This method is called when your extension is activated.
+ * @param {vscode.ExtensionContext} context - The context in which the extension is activated.
+ */
 function activate(context) {
   let disposableLoadTemplate = vscode.commands.registerCommand(
     "jupyter-templates.loadTemplate",
