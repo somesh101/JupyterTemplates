@@ -2,16 +2,12 @@
 
 ## Description
 
-The Notebook Template Creator is a VS Code extension that allows users to create and manage templates from existing notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save up to three different templates and load them as needed.
-
+The Notebook Template Creator is a VS Code extension that allows users to create and manage templates from existing notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save as many templates as they want with the custom name they provide.
 ## Features
 
-- **Create Templates**: Save the structure and content of existing notebooks as templates.
+- **Create Jupyter Template**: Save the structure and content of existing notebooks as templates.
 - **Load Templates**: Quickly load saved templates using commands:
-  - `Load Template 1`
-  - `Load Template 2`
-  - `Load Template 3`
-
+ 
 ## Installation
 
 1. Clone this repository to your local machine.
@@ -24,23 +20,20 @@ The Notebook Template Creator is a VS Code extension that allows users to create
 ### Save a Template
 
 1. Open a notebook you want to save as a template.
-2. Execute the command `Save Template` from the command palette.
+2. Execute the command `Create Jupyter Template` from the command palette.
 3. The notebook will be saved as one of the available templates in the extension's folder.
 
 ### Load a Template
 
 1. Open the command palette.
 2. Execute one of the following commands:
-   - `Load Template 1`
-   - `Load Template 2`
-   - `Load Template 3`
+   - `Load Jupyter Template`
+    - `Pick the template from list`
 3. The selected template will be loaded into the current workspace.
 
 ## Upcoming Features
 
-- **Save Templates to Extension Folder**: Implement a function to save templates in the extension's directory instead of user-specific folders.
-- **Enhanced Template Saving**: Develop a function to save templates from the existing document.
-- **JSON Format Update**: Update the JSON format used for saving templates to improve efficiency and flexibility.
+- **Got Any good Idea Let me Know**: 
 
 ## Development
 
@@ -55,8 +48,8 @@ To start developing and contributing to this project:
 
 ### File Structure
 
-- `src/`: Source code for the extension.
-- `template.json`: File where templates are stored.
+- `extension.js`: Source code for the extension.
+- `./templates/`: Folder where templates are stored.
 
 ### Running the Extension
 
