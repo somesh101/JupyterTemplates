@@ -11,7 +11,7 @@
     "url": "https://github.com/somesh101/JupyterTemplates.git"
   },
   "description": "The Notebook Template Creator is a VS Code extension that allows users to create and manage templates from existing notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save as many templates as they want with the custom name they provide.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.90.0"
   },
