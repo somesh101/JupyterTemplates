@@ -2,12 +2,13 @@
 
 ## Description
 
-The Notebook Template Creator is a VS Code extension that allows users to create and manage templates from existing notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save as many templates as they want with the custom name they provide.
+Allows users to create and manage templates from existing jupyter notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save as many templates as they want with the custom name they provide.
+
 ## Features
 
 - **Create Jupyter Template**: Save the structure and content of existing notebooks as templates.
 - **Load Templates**: Quickly load saved templates using commands:
-  
+
 ## Usage
 
 ### Save a Template
@@ -21,7 +22,7 @@ The Notebook Template Creator is a VS Code extension that allows users to create
 1. Open the command palette.
 2. Execute one of the following commands:
    - `Load Jupyter Template`
-    - `Pick the template from list`
+   - `Pick the template from list`
 3. The selected template will be loaded into the current workspace.
 
 ## Installation
@@ -32,6 +33,7 @@ The Notebook Template Creator is a VS Code extension that allows users to create
 4. Open the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS) and type `Developer: Reload Window` to load the extension.
 
 ## Upcoming Features
+    - Option to insert template into open notebook below the selected cell.
 
 - **Got Any good Idea Let me Know**: 
 

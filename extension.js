@@ -39,7 +39,7 @@ function readTemplate(templateFilePath) {
 
           const vscodeCell = new vscode.NotebookCellData(
             cellKind,
-            cell.source.join(""), // Join source array into a single string
+            cell.source, // Join source array into a single string
             cell.language || "python" // Replace with actual language if available
           );
 
@@ -115,6 +115,11 @@ async function createTemplate(context) {
   }
 
   const document = editor.notebook;
+//   console.log('flag');
+//   let cells = document.getCells();
+//   for (let i = 0; i < cells.length; i++) {
+//     console.log(cells[i].document.getText());
+// }  
   const filePath = document.uri.fsPath;
 
   if (!filePath.endsWith(".ipynb")) {
@@ -125,13 +130,13 @@ async function createTemplate(context) {
   }
 
   try {
-    const notebookContent = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    const notebookContent = document.getCells();
 
-    const cells = notebookContent.cells.map((cell, index) => ({
-      cell_type: cell.cell_type,
-      source: cell.source,
+    const cells = notebookContent.map((cell, index) => ({
+      cell_type: cell.kind,
+      source :  cell.document.getText(),
       metadata: cell.metadata,
-      position: index,
+      position: cell.index,
     }));
 
     const templateContent = {
