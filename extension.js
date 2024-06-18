@@ -141,7 +141,7 @@ async function createTemplate(context) {
 
     const templateContent = {
       cells,
-      metadata: notebookContent.metadata,
+      metadata: document.metadata,
     };
 
     let templateName = await createTemplateCommand();
