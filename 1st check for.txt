@@ -1,0 +1,12 @@
+1st check for
+1. nbformat and nbformat_minor
+3. metadata :{ kernel_info : {}, language_info{} }
+4. cells
+    4.1 Cell_type
+    4.2 metadata {}
+    4.3 source 
+    4.4 outputs : [
+    {output_type : 'stream'
+    name : stdout, stderr
+    }
+]

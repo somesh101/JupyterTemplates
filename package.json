@@ -5,13 +5,14 @@
   "publisherEmail": "somesh.km1@gmail.com",
   "license": "MIT",
   "author": "Somesh Kumar",
+
   "icon": "jupyterLabTemplatesLogo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/somesh101/JupyterTemplates.git"
   },
   "description": "The Notebook Template Creator is a VS Code extension that allows users to create and manage templates from existing notebooks. This extension aims to streamline the process of reusing notebook structures, saving time and effort. Users can save as many templates as they want with the custom name they provide.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -124,7 +125,7 @@
         "displayName": "Your Notebook Provider",
         "selector": [
           {
-            "filenamePattern": "*.json"
+            "filenamePattern": "*.*"
           }
         ]
       }
@@ -133,19 +134,29 @@
       {
         "command": "jupyter-templates.loadTemplate",
         "title": "Load Jupyter Template",
-        "category": "JupyterLab Templates"
+        "category": "Jupyter Templates"
       },
       {
         "command": "jupyter-templates.createTemplate",
         "title": "Create Jupyter Template",
-        "category": "JupyterLab Templates"
+        "category": "Jupyter Templates"
+      },
+      {
+        "command": "jupyter-templates.listAndDeleteTemplates",
+        "title": "Delete Jupyter Template",
+        "category": "Jupyter Templates"
+      },
+      {
+        "command": "jupyter-templates.InsertInOpenNotebook",
+        "title": "Insert Jupyter Template",
+        "category": "Jupyter Templates"
       }
     ]
   },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test"  
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
