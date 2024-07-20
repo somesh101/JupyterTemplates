@@ -1,6 +1,4 @@
 const vscode = require("vscode");
-const path = require("path");
-const fs = require("fs");
 const del = require("./delete.js");
 const insert = require("./insert.js");
 const create = require('./create.js');
@@ -14,7 +12,7 @@ function activate(context) {
   let disposableLoadTemplate = vscode.commands.registerCommand(
     "jupyter-templates.loadTemplate",
     async () => {
-      await insert.loadTemplateUsingEdit(context);
+      await insert.loadTemplate(context);
     }
   );
 

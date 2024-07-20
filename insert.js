@@ -4,11 +4,8 @@ const fs = require("fs");
 
 /**
  * Presents template names as menu for user to choose.
-
  * This function handles the logic for reading the template file names and delete the selected file.
- * 
  */
-
 async function openNotebookEditor() {
   const editor = vscode.window.activeNotebookEditor;
 
@@ -33,19 +30,27 @@ async function openNotebookEditor() {
   }
   return editor;
 }
+
+/**
+ * Postion = 0 means new notebook and 1 means get the actual postion from opennotebook
+ * 
+ */
 async function insertTemplateCells(notebookdata, Position) {
   // Load the template to get the template name
   const editor = openNotebookEditor();
   // editor.
-  const uri = (await editor).notebook.uri//vscode.Uri.parse(`untitled:template.ipynb`);
+  const uri = (await editor).notebook.uri; //vscode.Uri.parse(`untitled:template.ipynb`);
   const document = await vscode.workspace.openNotebookDocument(uri);
   const edit = new vscode.WorkspaceEdit();
 
   const vscodeCells = notebookdata;
-  console.log(vscodeCells);
+  // console.log(vscodeCells);
   if (Position > 0) Position = (await editor).selection.start;
 
-  let range = new vscode.NotebookRange(Position+1, Position + vscodeCells.length);
+  let range = new vscode.NotebookRange(
+    Position + 1,
+    Position + vscodeCells.length
+  );
   let notebookChanges = new vscode.NotebookEdit(range, vscodeCells);
   edit.set(document.uri, [notebookChanges]);
   await vscode.workspace.applyEdit(edit);
@@ -91,70 +96,6 @@ async function quickPickCommand(templates) {
  *
  */
 // @ts-ignore
-async function readTemplate_with_promise(templateFilePath) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(templateFilePath, "utf8", (err, templateData) => {
-      if (err) {
-        console.error(`Error reading template ${templateFilePath}:`, err);
-        reject(err);
-        return;
-      }
-
-      try {
-        const templateJson = JSON.parse(templateData);
-
-        // Extract cells from template JSON and convert to vscode.NotebookCellData array
-        const vscodeCells = templateJson.cells.map((cell) => {
-          let cellKind;
-          switch (cell.cell_type) {
-            case "code":
-              cellKind = vscode.NotebookCellKind.Code;
-              break;
-            case "markdown":
-              cellKind = vscode.NotebookCellKind.Markup;
-              break;
-            case "raw":
-              cellKind = vscode.NotebookCellKind.Markup;
-              break;
-            default:
-              cellKind = vscode.NotebookCellKind.Code;
-          }
-          
-          if(Array.isArray(cell.source))
-            cell.source = cell.source.join("\n");
-          else cell.source = String(cell.source);
-
-          const vscodeCell = new vscode.NotebookCellData(
-            cellKind,
-            cell.source || 'test', // Join source array into a single string
-            cell.language || "python" // Replace with actual language if available
-          );
-
-          // Set metadata if available
-          if (cell.metadata) {
-            vscodeCell.metadata = cell.metadata;
-          } else {
-            vscodeCell.metadata = {};
-          }
-          //templateJson.cells = vscodeCells;
-          return vscodeCell;
-        });
-          
-          let notebook = new vscode.NotebookData(vscodeCells);
-          notebook.metadata = templateJson.metadata;
-          console.log("returning notebook : ");
-        resolve(vscodeCells);
-      } catch (error) {
-        console.error(
-          `Error parsing template JSON from ${templateFilePath}:`,
-          error
-        );
-        reject(error);
-      }
-    });
-  });
-}
-
 async function readTemplate(templateFilePath) {
   try {
     // Read the file synchronously
@@ -172,13 +113,13 @@ async function readTemplate(templateFilePath) {
       let cellKind;
       switch (cell.cell_type) {
         case "code":
-          case "2":
-            case 2:
+        case "2":
+        case 2:
           cellKind = vscode.NotebookCellKind.Code;
           break;
         case "markdown":
-          case "1":
-            case 1:
+        case "1":
+        case 1:
           cellKind = vscode.NotebookCellKind.Markup;
           break;
         case "raw":
@@ -195,9 +136,10 @@ async function readTemplate(templateFilePath) {
         cell.source = String(cell.source);
       }
 
+
       const vscodeCell = new vscode.NotebookCellData(
         cellKind,
-        cell.source || '', // Join source array into a single string
+        cell.source || "", // Join source array into a single string
         cell.language || "python" // Replace with actual language if available
       );
 
@@ -215,6 +157,7 @@ async function readTemplate(templateFilePath) {
     notebook.metadata = templateJson.metadata;
     console.log("Returning notebook data:", notebook);
 
+
     return notebook;
   } catch (error) {
     console.error(`Error processing template ${templateFilePath}:`, error);
@@ -222,79 +165,77 @@ async function readTemplate(templateFilePath) {
   }
 }
 
-async function loadTemplateUsingEdit(context) {
-    try {
-    // fetching template name to load
-    const templateDir = context.extensionPath + "/templates/";
-    const templatesList = await getTemplates(templateDir, ".ipynb");
-    const templateName = await quickPickCommand(templatesList);
-    const templatePath = templateDir + templateName;
-
-    const uri = vscode.Uri.parse(`untitled:untitled.ipynb`);
-    const document = await vscode.workspace.openNotebookDocument(uri);
-    const edit = new vscode.WorkspaceEdit();
-
-    const vscodeCells = await readTemplate(templatePath);
-
-    let range = new vscode.NotebookRange(0, vscodeCells.cells.length);
-    let notebookChanges = new vscode.NotebookEdit(range, vscodeCells.cells);
-    edit.set(document.uri, [notebookChanges]);
-    await vscode.workspace.applyEdit(edit);
-
-    await vscode.window.showNotebookDocument(document, {
-      viewColumn: vscode.ViewColumn.One,
-    });
-    vscode.window.showInformationMessage(
-      `Template ${templateName} loaded successfully`
-    );
-  } catch (error) {
-    console.error(`Error loading template :`, error);
-    vscode.window.showErrorMessage(`Error loading template`);
-  }
+async function loadTemplateasEdits(context) {
+  //function to open notebook
+  console.log("calling as edits");
+  let timestamp = new Date().getTime();
+  vscode.Uri.parse(`untitled:template-${timestamp}.ipynb`);
+  
+  let emptyNotebook = new vscode.NotebookData([]);
+  emptyNotebook.metadata = {}; 
+  try {
+    // loading empty document
+    const notebookDocument = await vscode.workspace.openNotebookDocument('jupyter-notebook', emptyNotebook);
+    
+    // Show the notebook document to bring it into focus
+    await vscode.window.showNotebookDocument(notebookDocument);
+} catch (error) {
+    console.error('Failed to open and focus the notebook document:', error);
 }
-
+  InsertInOpenNotebook(context, 0)
+}
 
 async function loadTemplate(context) {
   //function to open notebook
   let timestamp = new Date().getTime();
-  let uri = vscode.Uri.parse(`untitled:template-${timestamp}.ipynb`);
-  
+  vscode.Uri.parse(`untitled:template-${timestamp}.ipynb`);
+
   const templateDir = context.extensionPath + "/templates/";
-  
+
   const templatesList = await getTemplates(templateDir, ".ipynb");
   const templateName = await quickPickCommand(templatesList);
   const templatePath = templateDir + templateName;
   let notebookdata = await readTemplate(templatePath);
-  console.log("template : ",notebookdata);
-    let  doc = vscode.workspace.openNotebookDocument('jupyter-notebook',notebookdata);
- // vscode.window.showNotebookDocument(JSON.stringify(notebookdata) , {viewColumn: vscode.ViewColumn.One});
-  
-  // let doc = vscode.workspace.openNotebookDocument(uri).then((success)=> {InsertInOpenNotebook(context, 0);}, (error) => {vscode.window.showErrorMessage("Error in opening new notebook: unable to load template")});
-  
+  // console.log("template : ", notebookdata);
+  try {
+    // Open the notebook document
+    const notebookDocument = await vscode.workspace.openNotebookDocument('jupyter-notebook', notebookdata);
+    
+    // Show the notebook document to bring it into focus
+    await vscode.window.showNotebookDocument(notebookDocument);
+} catch (error) {
+    console.error('Failed to open and focus the notebook document:', error);
+}
 }
 
+/*
+ * Postion = 0 means new notebook and 1 means get the actual postion from opennotebook
+*
+*/
 async function InsertInOpenNotebook(context, position = 1) {
   const templateDir = context.extensionPath + "/templates/";
-  
+
   const templatesList = await getTemplates(templateDir, ".ipynb");
   const templateName = await quickPickCommand(templatesList);
-  const templatePath = templateDir + templateName;``
+  const templatePath = templateDir + templateName;
+
   let notebookdata = await readTemplate(templatePath);
-  console.log("template : ",notebookdata);
+  // console.log("template : ", notebookdata);
   insertTemplateCells(notebookdata.cells, position);
-//   readTemplate(templatePath).then( notebookdata => {
-//     insertTemplateCells(notebookdata.cells, position);
-//   }).then(undefined, err => {
-//     console.error('I am error');
-//  });
+  //   readTemplate(templatePath).then( notebookdata => {
+  //     insertTemplateCells(notebookdata.cells, position);
+  //   }).then(undefined, err => {
+  //     console.error('I am error');
+  //  });
 }
 
-module.exports = { openNotebookEditor,
+module.exports = {
+  openNotebookEditor,
   insertTemplateCells,
   getTemplates,
   quickPickCommand,
   readTemplate,
   loadTemplate,
   InsertInOpenNotebook,
-  loadTemplateUsingEdit
-}
+  loadTemplateasEdits
+};

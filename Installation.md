@@ -9,6 +9,9 @@
 ### File Structure
 
 - `extension.js`: Source code for the extension.
+- `create.js`: Source code for the extension.
+- `insert.js`: Source code for the extension.
+- `delete.js`: Source code for the extension.
 - `./templates/`: Folder where templates are stored.
 
 ### Running the Extension
@@ -26,3 +29,7 @@ Contributions are welcome! Please follow these steps to contribute:
 4. Commit your changes (`git commit -m 'Add new feature'`).
 5. Push to the branch (`git push origin feature-branch`).
 6. Create a Pull Request.
+
+### License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

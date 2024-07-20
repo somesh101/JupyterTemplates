@@ -13,14 +13,13 @@ async function createTemplate(context) {
     const notebookContent = document.getCells();
 
     const cells = notebookContent.map((cell, index) => {
-      const cell_type =  cell.kind === 1 ? 'markdown' : cell.kind === 2 ? 'code' : 'raw';
+      const cell_type =  cell.kind === 1 ? 'markdown' : cell.kind === 2 ? 'code' : 'markdown';
       // Get all lines from the document
-    
     const lines = [];
     for (let i = 0; i < cell.document.lineCount; i++) {
       lines.push(cell.document.lineAt(i).text);
-      console.log(lines);
     }
+
     return {
       cell_type: cell_type,
       source: lines,
